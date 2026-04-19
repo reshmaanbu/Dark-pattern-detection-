@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Compare — Dark Pattern Detector{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Compare Two Websites</h1>
+  <p>Analyze two URLs side by side to see which is more trustworthy.</p>
+</div>
+
+{% if error %}
+<div class="alert alert-error">⚠ {{ error }}</div>
+{% endif %}
+
+<form action="{{ url_for('compare_urls') }}" method="POST" class="compare-form">
+  <div class="compare-inputs">
+    <div class="form-group">
+      <label>Website 1</label>
+      <input type="text" name="url1" placeholder="https://site-one.com" class="form-input" value="{{ url1 or '' }}" required />
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="form-group">
+      <label>Website 2</label>
+      <input type="text" name="url2" placeholder="https://site-two.com" class="form-input" value="{{ url2 or '' }}" required />
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:1.5rem">
+    <button type="submit" class="btn btn-primary">Compare Now →</button>
+  </div>
+</form>
+
+{% if result1 and result2 %}
+<div class="compare-results">
+
+  <!-- Winner Banner -->
+  {% if result1.score > result2.score %}
+    <div class="winner-banner">🏆 {{ url1 }} is more trustworthy</div>
+  {% elif result2.score > result1.score %}
+    <div class="winner-banner">🏆 {{ url2 }} is more trustworthy</div>
+  {% else %}
+    <div class="winner-banner">🤝 Both sites scored equally</div>
+  {% endif %}
+
+  <div class="compare-grid">
+    <!-- Site 1 -->
+    <div class="compare-col {% if result1.score >= result2.score %}compare-winner{% endif %}">
+      <h3 class="compare-url">{{ url1 }}</h3>
+      <div class="compare-score" style="color:{{ result1.risk_color }}">{{ result1.score }}/100</div>
+      <div class="risk-badge" style="background:{{ result1.risk_color }}22;color:{{ result1.risk_color }};border:1px solid {{ result1.risk_color }}">{{ result1.risk }} Risk</div>
+      <div class="compare-flags">{{ result1.total_flags }} flags</div>
+      {% for cat, info in result1.pattern_info.items() %}
+        {% if info.count > 0 %}
+        <div class="compare-pattern" style="border-color:{{ info.color }}">
+          <span style="color:{{ info.color }}">{{ info.label }}</span>: {{ info.count }}
+        </div>
+        {% endif %}
+      {% endfor %}
+      {% if result1.total_flags == 0 %}
+        <p class="all-clear">✅ No dark patterns found!</p>
+      {% endif %}
+    </div>
+
+    <!-- Site 2 -->
+    <div class="compare-col {% if result2.score >= result1.score %}compare-winner{% endif %}">
+      <h3 class="compare-url">{{ url2 }}</h3>
+      <div class="compare-score" style="color:{{ result2.risk_color }}">{{ result2.score }}/100</div>
+      <div class="risk-badge" style="background:{{ result2.risk_color }}22;color:{{ result2.risk_color }};border:1px solid {{ result2.risk_color }}">{{ result2.risk }} Risk</div>
+      <div class="compare-flags">{{ result2.total_flags }} flags</div>
+      {% for cat, info in result2.pattern_info.items() %}
+        {% if info.count > 0 %}
+        <div class="compare-pattern" style="border-color:{{ info.color }}">
+          <span style="color:{{ info.color }}">{{ info.label }}</span>: {{ info.count }}
+        </div>
+        {% endif %}
+      {% endfor %}
+      {% if result2.total_flags == 0 %}
+        <p class="all-clear">✅ No dark patterns found!</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

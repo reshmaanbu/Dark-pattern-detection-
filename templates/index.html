@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Dark Pattern Detector — Home{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-badge">Free &amp; Open Tool</div>
+  <h1 class="hero-title">Expose the Tricks<br/><span class="accent">Websites Use on You</span></h1>
+  <p class="hero-sub">Dark patterns are deceptive UI tactics that manipulate your decisions. We detect them before they manipulate you.</p>
+  <div class="hero-actions">
+    <a href="{{ url_for('analyzer') }}" class="btn btn-primary">Analyze a Website →</a>
+    <a href="{{ url_for('learn') }}" class="btn btn-ghost">What are dark patterns?</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">4</span><span class="stat-label">Pattern Types</span></div>
+    <div class="stat"><span class="stat-num">100+</span><span class="stat-label">Keywords Detected</span></div>
+    <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
+  </div>
+</section>
+
+<section class="cards-section">
+  <h2 class="section-title">What We Detect</h2>
+  <div class="cards">
+    <div class="card" style="--accent:#ff4444">
+      <div class="card-icon">⏰</div>
+      <h3>Fake Urgency</h3>
+      <p>"Offer ends in 5 minutes!" — artificial time pressure designed to stop you thinking.</p>
+    </div>
+    <div class="card" style="--accent:#ff8800">
+      <div class="card-icon">📦</div>
+      <h3>Scarcity</h3>
+      <p>"Only 2 left!" — false or exaggerated stock warnings to rush your purchase.</p>
+    </div>
+    <div class="card" style="--accent:#aa44ff">
+      <div class="card-icon">👥</div>
+      <h3>Social Pressure</h3>
+      <p>"37 people are viewing this" — manufactured crowd pressure to make you feel left out.</p>
+    </div>
+    <div class="card" style="--accent:#00aaff">
+      <div class="card-icon">😔</div>
+      <h3>Confirmshaming</h3>
+      <p>"No thanks, I hate saving money" — guilt-tripping you for saying no.</p>
+    </div>
+  </div>
+</section>
+
+<section class="how-section">
+  <h2 class="section-title">How It Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Enter a URL</h3>
+      <p>Paste any website URL into the analyzer.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>We Scrape &amp; Analyze</h3>
+      <p>Our engine fetches the text and scans 100+ dark pattern keywords.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>See Your Results</h3>
+      <p>Get a honesty score, highlighted sentences, and full explanations.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Ready to expose the manipulation?</h2>
+  <a href="{{ url_for('analyzer') }}" class="btn btn-primary btn-lg">Start Analyzing →</a>
+</section>
+
+{% endblock %}

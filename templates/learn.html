@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Learn — Dark Pattern Detector{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Learn About Dark Patterns</h1>
+  <p>Understand the deceptive tactics used against you online — and how to spot them.</p>
+</div>
+
+<div class="learn-grid">
+
+  <div class="learn-card" style="--accent:#ff4444">
+    <div class="learn-icon">⏰</div>
+    <h2>Fake Urgency</h2>
+    <p>Urgency patterns create artificial time pressure to prevent you from thinking carefully about a purchase or decision. They work by triggering your fear of missing out (FOMO).</p>
+    <div class="learn-examples">
+      <h4>Examples:</h4>
+      <ul>
+        <li>"Offer expires in 10 minutes!"</li>
+        <li>"Act now — limited time deal"</li>
+        <li>"Today only — don't miss out"</li>
+      </ul>
+    </div>
+    <div class="learn-tip">
+      <strong>💡 Tip:</strong> Always wait a day before making a big decision. The "offer" will usually still be there.
+    </div>
+  </div>
+
+  <div class="learn-card" style="--accent:#ff8800">
+    <div class="learn-icon">📦</div>
+    <h2>False Scarcity</h2>
+    <p>Scarcity patterns exaggerate how few items are left or how high demand is, pushing you to buy before you're ready. Often these numbers are fake or automatically reset.</p>
+    <div class="learn-examples">
+      <h4>Examples:</h4>
+      <ul>
+        <li>"Only 3 left in stock!"</li>
+        <li>"Selling fast — limited availability"</li>
+        <li>"While supplies last"</li>
+      </ul>
+    </div>
+    <div class="learn-tip">
+      <strong>💡 Tip:</strong> Check another retailer. If they have plenty of stock, the scarcity was manufactured.
+    </div>
+  </div>
+
+  <div class="learn-card" style="--accent:#aa44ff">
+    <div class="learn-icon">👥</div>
+    <h2>Social Pressure</h2>
+    <p>These patterns use crowd behavior to make you feel like everyone else is buying, so you should too. The numbers shown are often exaggerated or fabricated.</p>
+    <div class="learn-examples">
+      <h4>Examples:</h4>
+      <ul>
+        <li>"47 people are viewing this right now"</li>
+        <li>"Best seller — join 10,000+ customers"</li>
+        <li>"Trending — most popular choice"</li>
+      </ul>
+    </div>
+    <div class="learn-tip">
+      <strong>💡 Tip:</strong> Popularity ≠ quality. Make decisions based on your own needs, not crowd behavior.
+    </div>
+  </div>
+
+  <div class="learn-card" style="--accent:#00aaff">
+    <div class="learn-icon">😔</div>
+    <h2>Confirmshaming</h2>
+    <p>This pattern frames your refusal of an offer in a self-deprecating or negative way — making you feel foolish, cheap, or incompetent for saying no.</p>
+    <div class="learn-examples">
+      <h4>Examples:</h4>
+      <ul>
+        <li>"No thanks, I hate saving money"</li>
+        <li>"I prefer to pay full price"</li>
+        <li>"No thanks, I don't want to be smarter"</li>
+      </ul>
+    </div>
+    <div class="learn-tip">
+      <strong>💡 Tip:</strong> It's always okay to say no. The language is designed to make you feel bad — don't let it.
+    </div>
+  </div>
+
+</div>
+
+<div class="learn-more">
+  <h2>Further Reading</h2>
+  <div class="resource-links">
+    <a href="https://www.deceptive.design" target="_blank" class="resource-link">deceptive.design — Hall of Shame</a>
+    <a href="https://www.ftc.gov/news-events/topics/dark-patterns" target="_blank" class="resource-link">FTC on Dark Patterns</a>
+    <a href="https://darkpatterns.org" target="_blank" class="resource-link">darkpatterns.org</a>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:3rem">
+  <a href="{{ url_for('analyzer') }}" class="btn btn-primary">Now Analyze a Website →</a>
+</div>
+
+{% endblock %}

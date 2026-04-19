@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}About — Dark Pattern Detector{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>About Dark Pattern Detector</h1>
+</div>
+
+<div class="about-content">
+  <div class="about-section">
+    <h2>What is this?</h2>
+    <p>Dark Pattern Detector is a free, open-source tool that analyzes websites for deceptive UI patterns — techniques that companies use to manipulate your decisions. We believe in a more honest, transparent web.</p>
+  </div>
+
+  <div class="about-section">
+    <h2>How does detection work?</h2>
+    <p>We use a rule-based NLP approach: the page text is scraped, cleaned, split into sentences, and matched against a curated keyword database for four pattern categories. Each match contributes to a deduction from the base Honesty Score of 100.</p>
+    <div class="score-table">
+      <div class="score-row"><span>Fake Urgency match</span><span style="color:#ff4444">−10 pts</span></div>
+      <div class="score-row"><span>Scarcity match</span><span style="color:#ff8800">−8 pts</span></div>
+      <div class="score-row"><span>Social Pressure match</span><span style="color:#aa44ff">−6 pts</span></div>
+      <div class="score-row"><span>Confirmshaming match</span><span style="color:#00aaff">−7 pts</span></div>
+    </div>
+  </div>
+
+  <div class="about-section">
+    <h2>Tech Stack</h2>
+    <div class="tech-list">
+      <span class="tech-tag">Python / Flask</span>
+      <span class="tech-tag">BeautifulSoup</span>
+      <span class="tech-tag">SQLite</span>
+      <span class="tech-tag">Chart.js</span>
+      <span class="tech-tag">Vanilla JS</span>
+      <span class="tech-tag">pytesseract (optional)</span>
+    </div>
+  </div>
+
+  <div class="about-section">
+    <h2>Limitations</h2>
+    <p>This tool uses text-based heuristics and may produce false positives or miss visual-only dark patterns. It is a starting point for awareness, not a legal or definitive audit. Always use your own judgment.</p>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Dark Pattern Detector{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Analytics Dashboard</h1>
+  <p>Aggregate statistics from all analyzed websites.</p>
+</div>
+
+<!-- Summary Stats -->
+<div class="dash-stats">
+  <div class="dash-stat">
+    <span class="ds-num">{{ history|length }}</span>
+    <span class="ds-label">Sites Analyzed</span>
+  </div>
+  <div class="dash-stat" style="--col:#ff4444">
+    <span class="ds-num">{{ pattern_totals.urgency }}</span>
+    <span class="ds-label">Urgency Flags</span>
+  </div>
+  <div class="dash-stat" style="--col:#ff8800">
+    <span class="ds-num">{{ pattern_totals.scarcity }}</span>
+    <span class="ds-label">Scarcity Flags</span>
+  </div>
+  <div class="dash-stat" style="--col:#aa44ff">
+    <span class="ds-num">{{ pattern_totals.social_pressure }}</span>
+    <span class="ds-label">Social Pressure Flags</span>
+  </div>
+  <div class="dash-stat" style="--col:#00aaff">
+    <span class="ds-num">{{ pattern_totals.confirmshaming }}</span>
+    <span class="ds-label">Confirmshaming Flags</span>
+  </div>
+</div>
+
+{% if history|length > 0 %}
+<!-- Charts -->
+<div class="chart-section">
+  <div class="chart-box">
+    <h3>Pattern Type Distribution</h3>
+    <canvas id="dashPie" height="300"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Pattern Counts</h3>
+    <canvas id="dashBar" height="300"></canvas>
+  </div>
+</div>
+
+<!-- Score distribution -->
+<div class="chart-box full-width">
+  <h3>Honesty Scores Over Time</h3>
+  <canvas id="scoreLine" height="200"></canvas>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">📊</div>
+  <h3>No data yet</h3>
+  <p>Start analyzing websites to see charts here.</p>
+  <a href="{{ url_for('analyzer') }}" class="btn btn-primary">Analyze a Website →</a>
+</div>
+{% endif %}
+
+{% endblock %}
+{% block scripts %}
+{% if history|length > 0 %}
+<script>
+const totals = {
+  urgency: {{ pattern_totals.urgency }},
+  scarcity: {{ pattern_totals.scarcity }},
+  social_pressure: {{ pattern_totals.social_pressure }},
+  confirmshaming: {{ pattern_totals.confirmshaming }},
+};
+const labels = ['Fake Urgency','Scarcity','Social Pressure','Confirmshaming'];
+const colors = ['#ff4444','#ff8800','#aa44ff','#00aaff'];
+const values = [totals.urgency, totals.scarcity, totals.social_pressure, totals.confirmshaming];
+
+new Chart(document.getElementById('dashPie'), {
+  type: 'doughnut',
+  data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#0d0d0d' }] },
+  options: { plugins: { legend: { labels: { color: '#e0e0e0', font: { family: 'Space Mono' } } } } }
+});
+
+new Chart(document.getElementById('dashBar'), {
+  type: 'bar',
+  data: { labels, datasets: [{ label: 'Count', data: values, backgroundColor: colors, borderRadius: 6 }] },
+  options: {
+    scales: {
+      y: { ticks: { color: '#e0e0e0', stepSize: 1 }, grid: { color: '#ffffff11' } },
+      x: { ticks: { color: '#e0e0e0' }, grid: { color: '#ffffff11' } }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+
+// Score line chart
+const histScores = [{% for row in history|reverse %}{{ row.score }},{% endfor %}];
+const histUrls = [{% for row in history|reverse %}"{{ row.url[:30] }}...",{% endfor %}];
+new Chart(document.getElementById('scoreLine'), {
+  type: 'line',
+  data: {
+    labels: histUrls,
+    datasets: [{
+      label: 'Score',
+      data: histScores,
+      borderColor: '#22c55e',
+      backgroundColor: '#22c55e22',
+      tension: 0.4,
+      fill: true,
+      pointBackgroundColor: '#22c55e',
+    }]
+  },
+  options: {
+    scales: {
+      y: { min: 0, max: 100, ticks: { color: '#e0e0e0' }, grid: { color: '#ffffff11' } },
+      x: { ticks: { color: '#e0e0e0', maxTicksLimit: 8 }, grid: { color: '#ffffff11' } }
+    },
+    plugins: { legend: { labels: { color: '#e0e0e0' } } }
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

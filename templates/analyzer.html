@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Analyzer — Dark Pattern Detector{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Website Analyzer</h1>
+  <p>Enter a URL to detect dark patterns, or paste text directly below.</p>
+</div>
+
+{% if error %}
+<div class="alert alert-error">⚠ {{ error }}</div>
+{% endif %}
+
+<div class="analyzer-grid">
+  <!-- URL Form -->
+  <div class="card-panel">
+    <h2 class="panel-title">🔗 Analyze by URL</h2>
+    <form action="{{ url_for('analyze') }}" method="POST" class="analyze-form">
+      <div class="form-group">
+        <label for="url">Website URL</label>
+        <input type="text" id="url" name="url" placeholder="https://example.com" class="form-input" required />
+      </div>
+      <button type="submit" class="btn btn-primary w-full" id="analyzeBtn">
+        <span class="btn-text">Analyze Website →</span>
+        <span class="btn-loading" style="display:none">Scanning...</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Text Paste -->
+  <div class="card-panel">
+    <h2 class="panel-title">📝 Analyze Pasted Text</h2>
+    <div class="form-group">
+      <label for="pasteText">Paste website text here</label>
+      <textarea id="pasteText" rows="5" class="form-input" placeholder="Paste any text you want to analyze for dark patterns..."></textarea>
+    </div>
+    <button onclick="analyzeText()" class="btn btn-secondary w-full">Analyze Text →</button>
+    <div id="textResult" class="text-result" style="display:none"></div>
+  </div>
+
+  <!-- Screenshot Upload -->
+  <div class="card-panel">
+    <h2 class="panel-title">🖼 Analyze Screenshot <span class="badge">Optional</span></h2>
+    <p class="panel-desc">Upload a screenshot to extract and analyze text via OCR. Requires pytesseract.</p>
+    <div class="form-group">
+      <label for="screenshot">Upload Image</label>
+      <input type="file" id="screenshot" accept="image/*" class="form-input" />
+    </div>
+    <button onclick="analyzeScreenshot()" class="btn btn-secondary w-full">Analyze Image →</button>
+    <div id="screenshotResult" class="text-result" style="display:none"></div>
+  </div>
+</div>
+
+<div class="pattern-legend">
+  <h3>Pattern Legend</h3>
+  <div class="legend-items">
+    <span class="legend-item" style="background:#ff444422;border-color:#ff4444">⏰ Fake Urgency</span>
+    <span class="legend-item" style="background:#ff880022;border-color:#ff8800">📦 Scarcity</span>
+    <span class="legend-item" style="background:#aa44ff22;border-color:#aa44ff">👥 Social Pressure</span>
+    <span class="legend-item" style="background:#00aaff22;border-color:#00aaff">😔 Confirmshaming</span>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelector('.analyze-form').addEventListener('submit', function() {
+  document.querySelector('.btn-text').style.display = 'none';
+  document.querySelector('.btn-loading').style.display = 'inline';
+});
+</script>
+{% endblock %}

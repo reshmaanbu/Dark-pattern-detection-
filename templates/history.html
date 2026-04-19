@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}History — Dark Pattern Detector{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Analysis History</h1>
+  <p>All previously analyzed websites.</p>
+</div>
+
+{% if history %}
+<div class="history-search">
+  <input type="text" id="histSearch" placeholder="Filter by URL..." class="form-input" oninput="filterHistory()" />
+</div>
+
+<div class="history-table-wrap">
+  <table class="history-table" id="histTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>URL</th>
+        <th>Score</th>
+        <th>Risk</th>
+        <th>Analyzed At</th>
+        <th>Re-analyze</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in history %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td class="url-cell" title="{{ row.url }}">{{ row.url[:60] }}{% if row.url|length > 60 %}...{% endif %}</td>
+        <td>
+          {% if row.score > 70 %}
+            <span class="score-pill" style="background:#22c55e22;color:#22c55e">{{ row.score }}</span>
+          {% elif row.score >= 40 %}
+            <span class="score-pill" style="background:#f59e0b22;color:#f59e0b">{{ row.score }}</span>
+          {% else %}
+            <span class="score-pill" style="background:#ef444422;color:#ef4444">{{ row.score }}</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if row.score > 70 %}
+            <span style="color:#22c55e">Low</span>
+          {% elif row.score >= 40 %}
+            <span style="color:#f59e0b">Medium</span>
+          {% else %}
+            <span style="color:#ef4444">High</span>
+          {% endif %}
+        </td>
+        <td class="date-cell">{{ row.analyzed_at }}</td>
+        <td>
+          <form action="{{ url_for('analyze') }}" method="POST" style="display:inline">
+            <input type="hidden" name="url" value="{{ row.url }}" />
+            <button type="submit" class="btn-sm">↻ Re-run</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">🕐</div>
+  <h3>No history yet</h3>
+  <p>Start analyzing websites and they'll appear here.</p>
+  <a href="{{ url_for('analyzer') }}" class="btn btn-primary">Analyze a Website →</a>
+</div>
+{% endif %}
+
+{% endblock %}
+{% block scripts %}
+<script>
+function filterHistory() {
+  const q = document.getElementById('histSearch').value.toLowerCase();
+  document.querySelectorAll('#histTable tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}

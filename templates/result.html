@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Results — Dark Pattern Detector{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <a href="{{ url_for('analyzer') }}" class="back-link">← Back to Analyzer</a>
+  <h1>Analysis Results</h1>
+  <p class="url-display">{{ url }}</p>
+</div>
+
+<!-- Score Card -->
+<div class="score-section">
+  <div class="score-card" style="--risk-color:{{ result.risk_color }}">
+    <div class="score-ring">
+      <svg viewBox="0 0 120 120" class="score-svg">
+        <circle cx="60" cy="60" r="50" class="score-bg-circle"/>
+        <circle cx="60" cy="60" r="50" class="score-arc"
+          stroke="{{ result.risk_color }}"
+          stroke-dasharray="{{ result.score * 3.14 }} 314"
+          transform="rotate(-90 60 60)"/>
+      </svg>
+      <div class="score-text">
+        <span class="score-num">{{ result.score }}</span>
+        <span class="score-label">/ 100</span>
+      </div>
+    </div>
+    <div class="score-info">
+      <h2>Honesty Score</h2>
+      <div class="risk-badge" style="background:{{ result.risk_color }}22;color:{{ result.risk_color }};border:1px solid {{ result.risk_color }}">
+        {{ result.risk }} Risk
+      </div>
+      <p>{{ result.total_flags }} suspicious sentence(s) found</p>
+    </div>
+  </div>
+
+  <!-- Pattern Counts -->
+  <div class="pattern-counts">
+    {% for cat, info in result.pattern_info.items() %}
+    <div class="pattern-count-card" style="--col:{{ info.color }}">
+      <span class="pc-num">{{ info.count }}</span>
+      <span class="pc-label">{{ info.label }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Pie Chart -->
+{% if result.total_flags > 0 %}
+<div class="chart-section">
+  <div class="chart-box">
+    <h3>Pattern Distribution</h3>
+    <canvas id="pieChart" width="300" height="300"></canvas>
+  </div>
+  <div class="chart-box">
+    <h3>Pattern Counts</h3>
+    <canvas id="barChart" width="400" height="300"></canvas>
+  </div>
+</div>
+{% endif %}
+
+<!-- Highlighted Text -->
+<div class="highlight-section">
+  <h2>Sentence Analysis</h2>
+  <p class="section-hint">Suspicious sentences are highlighted by pattern type.</p>
+  <div class="highlighted-text">
+    {% for ann in result.annotations %}
+      {% if ann.category %}
+        <span class="flagged-sentence" 
+              style="background:{{ ann.color }}22;border-bottom:2px solid {{ ann.color }}"
+              title="{{ ann.label }}: {{ ann.explanation }}">
+          {{ ann.sentence }}
+          <span class="flag-tag" style="background:{{ ann.color }}">{{ ann.label }}</span>
+        </span>
+      {% else %}
+        <span class="clean-sentence">{{ ann.sentence }}</span>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Explanation Cards -->
+{% if result.total_flags > 0 %}
+<div class="explanations-section">
+  <h2>Flagged Sentences — Explained</h2>
+  {% for ann in result.annotations %}
+    {% if ann.category %}
+    <div class="explanation-card" style="border-left:4px solid {{ ann.color }}">
+      <div class="exp-header">
+        <span class="exp-label" style="color:{{ ann.color }}">{{ ann.label }}</span>
+      </div>
+      <blockquote class="exp-sentence">"{{ ann.sentence }}"</blockquote>
+      <p class="exp-text">{{ ann.explanation }}</p>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Feedback -->
+<div class="feedback-section">
+  <h3>Was this analysis helpful?</h3>
+  <div class="feedback-btns">
+    <button class="feedback-btn" onclick="sendFeedback('up', '{{ url }}')">👍 Yes</button>
+    <button class="feedback-btn" onclick="sendFeedback('down', '{{ url }}')">👎 No</button>
+  </div>
+  <p id="feedbackMsg" class="feedback-msg" style="display:none">Thanks for your feedback!</p>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+const patternData = {
+  labels: [{% for cat, info in result.pattern_info.items() %}"{{ info.label }}",{% endfor %}],
+  counts: [{% for cat, info in result.pattern_info.items() %}{{ info.count }},{% endfor %}],
+  colors: [{% for cat, info in result.pattern_info.items() %}"{{ info.color }}",{% endfor %}],
+};
+
+{% if result.total_flags > 0 %}
+// Pie chart
+new Chart(document.getElementById('pieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: patternData.labels,
+    datasets: [{ data: patternData.counts, backgroundColor: patternData.colors, borderWidth: 2, borderColor: '#0d0d0d' }]
+  },
+  options: { plugins: { legend: { labels: { color: '#e0e0e0', font: { family: 'Space Mono' } } } } }
+});
+
+// Bar chart
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: patternData.labels,
+    datasets: [{ label: 'Count', data: patternData.counts, backgroundColor: patternData.colors, borderRadius: 4 }]
+  },
+  options: {
+    scales: {
+      y: { ticks: { color: '#e0e0e0', stepSize: 1 }, grid: { color: '#ffffff11' } },
+      x: { ticks: { color: '#e0e0e0' }, grid: { color: '#ffffff11' } }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+{% endif %}
+</script>
+{% endblock %}
